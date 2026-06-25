@@ -92,7 +92,7 @@ static const char* MQTT_STATUS_TOPIC = "tft/status";
 static const uint8_t  MAX_CHANNELS    = 8;
 static const uint8_t  MAX_TOPIC_LEN   = 64;
 // Max MQTT payload bytes — must match mqtt.setBufferSize() call below.
-static const uint16_t MAX_PAYLOAD_LEN = 2048;
+static const uint16_t MAX_PAYLOAD_LEN = 17000;
 
 // Channel splash duration (ms)
 static const uint32_t SPLASH_MS   = 500;
@@ -458,11 +458,11 @@ static void configureWiFiStation() {
     WiFi.mode(WIFI_OFF);
     delay(100);
 
+    bool hostnameValid = false;
     if (WIFI_HOSTNAME && *WIFI_HOSTNAME) {
-        if (isValidHostname(WIFI_HOSTNAME)) {
+        hostnameValid = isValidHostname(WIFI_HOSTNAME);
+        if (hostnameValid) {
             WiFi.setHostname(WIFI_HOSTNAME);
-            Serial.print(F("Requested DHCP hostname: "));
-            Serial.println(WIFI_HOSTNAME);
         } else {
             Serial.print(F("Invalid hostname, using SDK default: "));
             Serial.println(WIFI_HOSTNAME);
@@ -471,6 +471,18 @@ static void configureWiFiStation() {
 
     if (!WiFi.mode(WIFI_STA)) {
         Serial.println(F("WiFi STA mode failed"));
+        return;
+    }
+
+    if (hostnameValid) {
+        bool stationHostOk = WiFi.STA.setHostname(WIFI_HOSTNAME);
+        Serial.print(F("Requested DHCP hostname: "));
+        Serial.println(WIFI_HOSTNAME);
+        Serial.print(F("STA netif hostname: "));
+        Serial.println(WiFi.STA.getHostname());
+        if (!stationHostOk) {
+            Serial.println(F("STA netif hostname request failed"));
+        }
     }
 }
 
