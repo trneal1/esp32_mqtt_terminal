@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"c:\\\\Users\\\\trnea\\\\OneDrive\\\\Documents\\\\PlatformIO\\\\Projects\\\\esp8266_mqtt_terminal\"; & \"$env:USERPROFILE\\\\.platformio\\\\penv\\\\Scripts\\\\pio.exe\" run 2>&1 | Where-Object { $_ -match \"warning|error|SUCCESS|FAILED\" })"
+    ]
+  }
+}
